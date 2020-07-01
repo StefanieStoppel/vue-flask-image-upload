@@ -1,3 +1,7 @@
+/**
+ Styling kudos go mostly to the author of this CodePen: https://codepen.io/wallaceerick/pen/fEdrz
+ **/
+
 @import "compass/css3";
 
 @import url("https://fonts.googleapis.com/css?family=Lato");
@@ -8,7 +12,7 @@ $file-upload-color: #f568af;
 * {
   margin: 0;
   padding: 0;
-  font-family: Lato, Arial;
+  font-family: Lato, Arial, serif;
 }
 body {
   color: #fff;

@@ -1,6 +1,6 @@
 # vue-flask-image-upload
 This repo contains an example application for uploading *.png images
-from the Vue.js frontend to a simple flask REST server at which saves them to a local directory.
+from the Vue.js frontend to a simple flask REST server which saves them to a local directory.
 <img src="./src/assets/screenshot.png" alt="Screenshot of the application" max-width="800px" height="auto">
 
 ## Project setup

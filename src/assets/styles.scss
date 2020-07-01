@@ -1,0 +1,113 @@
+@import "compass/css3";
+
+@import url("https://fonts.googleapis.com/css?family=Lato");
+
+$background: #4cd3c2;
+$file-upload-color: #f568af;
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Lato, Arial;
+}
+body {
+  color: #fff;
+  padding: 55px 25px;
+  background-color: $background;
+}
+h1 {
+  font-weight: normal;
+  font-size: 40px;
+  text-transform: uppercase;
+  span {
+    font-size: 13px;
+    display: block;
+    padding-left: 4px;
+  }
+}
+p {
+  margin-top: 200px;
+  a {
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-block;
+    color: #fff;
+    padding: 5px 10px;
+    margin: 0 5px;
+    background-color: darken($file-upload-color, 2);
+    @include transition(all 0.2s ease-in);
+    &:hover {
+      background-color: darken($file-upload-color, 5);
+    }
+  }
+}
+.custom-file-upload-hidden {
+  display: none;
+  visibility: hidden;
+  position: absolute;
+  left: -9999px;
+}
+.custom-file-upload {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 1em;
+  width: auto;
+  font-size: 16px;
+  margin-top: 30px;
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+}
+
+.file-upload-wrapper {
+  display: grid;
+  grid-gap: 0;
+  grid-template-columns: 2fr 1fr;
+  grid-row: 1;
+  grid-column: 2;
+  justify-items: start;
+  position: relative;
+  margin-bottom: 5px;
+}
+.file-upload-input {
+  grid-column: 1;
+  width: 100%;
+  color: #fff;
+  font-size: 16px;
+  padding: 11px 17px;
+  border: none;
+  background-color: lighten($file-upload-color, 2);
+  @include transition(all 0.2s ease-in);
+  float: left; /* IE 9 Fix */
+  &:hover, &:focus {
+    background-color: darken($file-upload-color, 5);
+    outline: none;
+  }
+}
+.button {
+  cursor: pointer;
+  display: inline-block;
+  color: #fff;
+  font-size: 16px;
+  text-transform: uppercase;
+  padding: 11px 20px;
+  border: none;
+  margin-left: -1px;
+  background-color: darken($file-upload-color, 10);
+  float: left; /* IE 9 Fix */
+  @include transition(all 0.2s ease-in);
+  &:hover {
+    background-color: darken($file-upload-color, 20);
+  }
+}
+.select-images-button {
+  grid-column: 2;
+  width: 100%;
+  z-index: 1;
+}
+.file-upload-button {
+  grid-row: 2;
+  grid-column: 2;
+}

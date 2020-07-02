@@ -1,5 +1,6 @@
 import os
 import argparse
+import json
 
 from flask import Flask, jsonify, request, render_template
 from flask_cors import cross_origin
@@ -27,11 +28,12 @@ def index():
 @app.route("/upload-files", methods=["POST"])
 @cross_origin(origin="localhost:8080")
 def upload_images():
+    object_class_filename_map = list()
     if request.files:
         for i, file in enumerate(request.files):
             try:
                 file = request.files[f"files[{i}]"]
-                _, file_extension = os.path.splitext(file.filename)
+                filename, file_extension = os.path.splitext(file.filename)
                 if file_extension not in ALLOWED_EXTENSIONS:
                     return jsonify("Unsupported file type"), 415
                 if not os.path.exists(UPLOAD_PATH):
@@ -39,8 +41,17 @@ def upload_images():
                 filepath = os.path.join(UPLOAD_PATH, secure_filename(file.filename))
                 print(f"Saving file to {filepath}")
                 file.save(filepath)
+
+                if request.form:
+                    object_class = json.loads(request.form["objectClass"])
+                    object_class_filename_map.append({'filename': filename,
+                                                      'objectId': object_class["value"]})
             except (KeyError, FileNotFoundError):
                 return jsonify("An error occurred while processing the file."), 500
+        for element in object_class_filename_map:
+            save_filename = secure_filename(f"{element['filename'].split('-')[0]}-class.txt")
+            with open(os.path.join(UPLOAD_PATH, save_filename), "w") as class_file:
+                class_file.write(element["objectId"])
         return jsonify("Files saved."), 200
     return jsonify(False)
 

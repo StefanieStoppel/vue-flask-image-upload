@@ -5,7 +5,7 @@ from flask import Flask, jsonify, request
 from flask_cors import cross_origin
 from werkzeug.utils import secure_filename
 
-ALLOWED_FILETYPES = ['image/png']
+ALLOWED_FILETYPES = ["image/png"]
 HOME = str(Path.home())
 DESTINATION_PATH = os.path.abspath(os.path.join(HOME, "Desktop/vue-flask-image-upload"))
 
@@ -17,8 +17,8 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 
-@app.route('/upload-images', methods=['POST'])
-@cross_origin(origin='localhost:8080')
+@app.route("/upload-images", methods=["POST"])
+@cross_origin(origin="localhost:8080")
 def upload_images():
     if request.files:
         for i, file in enumerate(request.files):
@@ -35,5 +35,5 @@ def upload_images():
     return jsonify(False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()

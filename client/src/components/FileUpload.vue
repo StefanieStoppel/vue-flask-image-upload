@@ -9,7 +9,6 @@
                        class="custom-file-upload-hidden"
                        ref="files"
                        multiple
-                       accept="image/png"
                        @change="handleUploadFiles()"/>
                 <input type="text" class="file-upload-input" :title="fileNames" v-model="fileNames">
                 <button class="select-files-button button" @click="triggerChangeOnFilesInput">SELECT FILES</button>

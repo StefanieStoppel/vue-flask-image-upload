@@ -5,7 +5,9 @@ from flask import Flask, jsonify, request, render_template
 from flask_cors import cross_origin
 from werkzeug.utils import secure_filename
 
-ALLOWED_FILETYPES = ["image/png"]
+FILE_EXT_PNG = ".png"
+FILE_EXT_MAT = ".mat"
+ALLOWED_EXTENSIONS = [FILE_EXT_PNG, FILE_EXT_MAT]
 HOME = str(Path.home())
 DESTINATION_PATH = os.path.abspath(os.path.join(HOME, "Desktop/vue-flask-image-upload"))
 
@@ -13,32 +15,34 @@ DESTINATION_PATH = os.path.abspath(os.path.join(HOME, "Desktop/vue-flask-image-u
 DEBUG = True
 
 # instantiate the app
-app = Flask(__name__,
-            static_folder="./static",
-            template_folder="./static")
+app = Flask(__name__)
+# app = Flask(__name__,
+#             static_folder="./static",
+#             template_folder="./static")
 app.config.from_object(__name__)
 
+#
+# @app.route('/')
+# def index():
+#     return render_template("index.html")
 
-@app.route('/')
-def index():
-    return render_template("index.html")
 
-
-@app.route("/upload-images", methods=["POST"])
+@app.route("/upload-files", methods=["POST"])
 @cross_origin(origin="localhost:8080")
 def upload_images():
     if request.files:
         for i, file in enumerate(request.files):
             try:
-                image = request.files[f"images[{i}]"]
-                if image.content_type not in ALLOWED_FILETYPES:
-                    return jsonify("Unsupported Media Type"), 415
+                file = request.files[f"files[{i}]"]
+                _, file_extension = os.path.splitext(file.filename)
+                if file_extension not in ALLOWED_EXTENSIONS:
+                    return jsonify("Unsupported file type"), 415
                 if not os.path.exists(DESTINATION_PATH):
                     os.makedirs(DESTINATION_PATH, exist_ok=True)
-                image.save(os.path.join(DESTINATION_PATH, secure_filename(image.filename)))
+                file.save(os.path.join(DESTINATION_PATH, secure_filename(file.filename)))
             except (KeyError, FileNotFoundError):
                 return jsonify("An error occurred while processing the file."), 500
-        return jsonify("Images saved."), 200
+        return jsonify("Files saved."), 200
     return jsonify(False)
 
 

@@ -13,16 +13,15 @@ ALLOWED_EXTENSIONS = [FILE_EXT_PNG, FILE_EXT_MAT]
 DEBUG = True
 
 # instantiate the app
-app = Flask(__name__)
-# app = Flask(__name__,
-#             static_folder="./static",
-#             template_folder="./static")
+app = Flask(__name__,
+            static_folder="./static",
+            template_folder="./static")
 app.config.from_object(__name__)
 
-#
-# @app.route('/')
-# def index():
-#     return render_template("index.html")
+
+@app.route('/')
+def index():
+    return render_template("index.html")
 
 
 @app.route("/upload-files", methods=["POST"])
@@ -37,7 +36,9 @@ def upload_images():
                     return jsonify("Unsupported file type"), 415
                 if not os.path.exists(UPLOAD_PATH):
                     os.makedirs(UPLOAD_PATH, exist_ok=True)
-                file.save(os.path.join(UPLOAD_PATH, secure_filename(file.filename)))
+                filepath = os.path.join(UPLOAD_PATH, secure_filename(file.filename))
+                print(f"Saving file to {filepath}")
+                file.save(filepath)
             except (KeyError, FileNotFoundError):
                 return jsonify("An error occurred while processing the file."), 500
         return jsonify("Files saved."), 200
@@ -50,4 +51,4 @@ if __name__ == "__main__":
                         help='Path to upload files to which are provided via the web interface.')
     args = parser.parse_args()
     UPLOAD_PATH = args.upload_path
-    app.run()
+    app.run(host="0.0.0.0", port="5000")

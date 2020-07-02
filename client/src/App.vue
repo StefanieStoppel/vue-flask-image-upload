@@ -1,17 +1,17 @@
 <template>
   <div id="app">
 
-    <ImageUpload></ImageUpload>
+    <FileUpload></FileUpload>
   </div>
 </template>
 
 <script>
-import ImageUpload from "./components/ImageUpload";
+import FileUpload from "./components/FileUpload";
 
 export default {
   name: 'App',
   components: {
-    ImageUpload
+    FileUpload
   }
 }
 </script>
@@ -25,7 +25,7 @@ export default {
   color: #f54291;
   margin-top: 60px;
 }
-.image-icon {
+.file-icon {
   max-width: 8em;
   margin-top: 2em;
 }

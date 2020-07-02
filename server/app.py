@@ -1,7 +1,7 @@
 import os
 
 from pathlib import Path
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import cross_origin
 from werkzeug.utils import secure_filename
 
@@ -13,8 +13,15 @@ DESTINATION_PATH = os.path.abspath(os.path.join(HOME, "Desktop/vue-flask-image-u
 DEBUG = True
 
 # instantiate the app
-app = Flask(__name__)
+app = Flask(__name__,
+            static_folder="./static",
+            template_folder="./static")
 app.config.from_object(__name__)
+
+
+@app.route('/')
+def index():
+    return render_template("index.html")
 
 
 @app.route("/upload-images", methods=["POST"])

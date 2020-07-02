@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import ImageUpload from "@/components/ImageUpload";
+import ImageUpload from "./components/ImageUpload";
 
 export default {
   name: 'App',

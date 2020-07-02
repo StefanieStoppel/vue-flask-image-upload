@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-DEFAULT_DIR="$HOME/Desktop/test"
-HOST_MOUNT_DIR=${1:-$DEFAULT_DIR}
+DEFAULT_HOST_MOUNT_DIR="$HOME/Desktop/test"
+HOST_MOUNT_DIR=${1:-$DEFAULT_HOST_MOUNT_DIR}
 CONTAINER_MOUNT_DIR=/app/data
 
 # Run docker container

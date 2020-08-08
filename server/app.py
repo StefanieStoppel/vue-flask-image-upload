@@ -20,16 +20,8 @@ KEY_FRAME_ID = 'frame_id'
 # configuration
 DEBUG = True
 
-# instantiate the app
-# app = Flask(__name__,
-#             static_folder="./static",
-#             template_folder="./static")
-app = Flask(__name__)
-app.config.from_object(__name__)
-
-# @app.route('/')
-# def index():
-#     return render_template("index.html")
+# instantiate the flask app
+app = Flask(__name__, static_folder="./static", template_folder="./static")
 
 
 def save_uploaded_files(files_per_frame_dict, frame_id):
@@ -92,8 +84,13 @@ def find_frame_id(filename: str) -> str:
     return matches[0]
 
 
+@app.route("/")
+def index():
+    return render_template('index.html')
+
+
 @app.route("/upload-files", methods=["POST"])
-@cross_origin(origin="localhost:8080")
+@cross_origin(origin="localhost:5000")
 def upload_images():
     files_per_frame_dict = dict()
     if request.files:

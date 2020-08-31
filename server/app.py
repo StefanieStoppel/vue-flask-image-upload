@@ -2,9 +2,9 @@ import os
 import argparse
 import json
 import re
-import pcl
+#import pcl
 
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, send_file
 from flask_cors import cross_origin
 from werkzeug.utils import secure_filename
 
@@ -89,10 +89,11 @@ def find_frame_id(filename: str) -> str:
 def index():
     return render_template('index.html')
 
+
 @app.route("/view-pcd", methods=["GET"])
 @cross_origin(origin="localhost:5000")
 def view_pcd():
-    return pcl.load('../client/src/components/models/pcd/binary/test-completed.pcd')
+    return send_file('/Users/aleksandrakornivec/vue-flask-image-upload/client/src/components/models/pcd/binary/test-completed.pcd', attachment_filename='test-completed.pcd')
 
 @app.route("/upload-files", methods=["POST"])
 @cross_origin(origin="localhost:5000")

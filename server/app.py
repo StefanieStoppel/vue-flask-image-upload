@@ -2,7 +2,6 @@ import os
 import argparse
 import json
 import re
-#import pcl
 
 from flask import Flask, jsonify, request, render_template, send_file
 from flask_cors import cross_origin
@@ -93,7 +92,8 @@ def index():
 @app.route("/view-pcd", methods=["GET"])
 @cross_origin(origin="localhost:5000")
 def view_pcd():
-    return send_file('/Users/aleksandrakornivec/vue-flask-image-upload/client/src/components/models/pcd/binary/test-completed.pcd', attachment_filename='test-completed.pcd')
+    return send_file('/Users/sstoppel/dev/Uni/vue-file-upload/client/src/components/models/pcd/binary/037_scissors.pcd', attachment_filename='037_scissors.pcd')
+
 
 @app.route("/upload-files", methods=["POST"])
 @cross_origin(origin="localhost:5000")

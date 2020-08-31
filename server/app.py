@@ -2,6 +2,7 @@ import os
 import argparse
 import json
 import re
+import pcl
 
 from flask import Flask, jsonify, request, render_template
 from flask_cors import cross_origin
@@ -88,6 +89,10 @@ def find_frame_id(filename: str) -> str:
 def index():
     return render_template('index.html')
 
+@app.route("/view-pcd", methods=["GET"])
+@cross_origin(origin="localhost:5000")
+def view_pcd():
+    return pcl.load('../client/src/components/models/pcd/binary/test-completed.pcd')
 
 @app.route("/upload-files", methods=["POST"])
 @cross_origin(origin="localhost:5000")

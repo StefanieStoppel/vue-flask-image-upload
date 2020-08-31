@@ -2,16 +2,20 @@
   <div id="app">
 
     <FileUpload></FileUpload>
+
+    <PCDViewer></PCDViewer>
   </div>
 </template>
 
 <script>
 import FileUpload from "./components/FileUpload";
+import PCDViewer from "./components/PCDViewer";
 
 export default {
   name: 'App',
   components: {
-    FileUpload
+    FileUpload,
+    PCDViewer
   }
 }
 </script>

@@ -2,11 +2,14 @@ import os
 import argparse
 import json
 import re
+import time
+from datetime import datetime
 
 from flask import Flask, jsonify, request, render_template, send_file
 from flask_cors import cross_origin
 from werkzeug.utils import secure_filename
 
+UPLOAD_PATH = ''
 FILE_EXT_PNG = ".png"
 FILE_EXT_MAT = ".mat"
 ALLOWED_EXTENSIONS = [FILE_EXT_PNG, FILE_EXT_MAT]
@@ -16,6 +19,8 @@ KEY_CLASS_ID = 'class_id'
 KEY_CLASS_NAME = 'class_name'
 KEY_FILE_NAMES = 'file_names'
 KEY_FRAME_ID = 'frame_id'
+PCD_SUFFIX = '_pred_cloud-completed.pcd'
+VIEW_PCD_URL = 'http://localhost:5000/view-pcd'
 
 # configuration
 DEBUG = True
@@ -84,34 +89,59 @@ def find_frame_id(filename: str) -> str:
     return matches[0]
 
 
+def wait_for_pc_creation_until_timeout(pc_file_paths, timeout_seconds=60):
+    print(f'Waiting {timeout_seconds} for final point cloud completion...')
+    start_time = datetime.now()
+    while True:
+        time.sleep(2)
+        files_at_upload_path = [os.path.join(UPLOAD_PATH, file) for file in os.listdir(UPLOAD_PATH)
+                                if os.path.isfile(os.path.join(UPLOAD_PATH, file))]
+        all_pc_created = all(pc_file_path in files_at_upload_path for pc_file_path in pc_file_paths)
+        if all_pc_created:
+            print('All point clouds have been created and found...')
+            return True
+        if (datetime.now() - start_time).total_seconds() > timeout_seconds:
+            print(f'Timeout of {timeout_seconds} exceeded. Aborting...')
+            return False
+
+
 @app.route("/")
 def index():
     return render_template('index.html')
 
 
-@app.route("/view-pcd", methods=["GET"])
-@cross_origin(origin="localhost:5000")
-def view_pcd():
-    for file in os.listdir(UPLOAD_PATH):
-        if file.endswith(".pcd"):
-            print(os.path.join(UPLOAD_PATH, file))
-            return send_file(os.path.join(UPLOAD_PATH, file))
-    return ''
+@app.route("/view-pcd/<file_name>", methods=["GET"])
+@cross_origin(origin=["localhost:5000", "localhost:8080"])
+def view_pcd(file_name):
+    print(f'Checking whether filename {file_name} exists...')
+    pc_path = os.path.join(UPLOAD_PATH, file_name)
+    if not os.path.isfile(pc_path):
+        return jsonify(False), 500
+    print('Returning point cloud file...')
+    return send_file(pc_path)
 
 
 @app.route("/upload-files", methods=["POST"])
-@cross_origin(origin="localhost:5000")
-def upload_images():
+@cross_origin(origin=["localhost:5000", "localhost:8080"])
+def upload_files():
     files_per_frame_dict = dict()
     if request.files:
         files_per_frame_dict = create_files_per_frame_dict()
     if request.form:
         config_list = create_config_list(files_per_frame_dict)
+        final_pc_file_paths = []
         for frame_config in config_list:
             frame_id = frame_config[KEY_FRAME_ID]
+            final_pc_file_paths.append(os.path.join(UPLOAD_PATH, f'{frame_id}{PCD_SUFFIX}'))
             save_config_as_json(frame_config, frame_id)
             save_uploaded_files(files_per_frame_dict, frame_id)
-        return jsonify("Files saved."), 200
+        # wait 60 seconds while checking for the creation of the pc files every 2 seconds
+        result = wait_for_pc_creation_until_timeout(final_pc_file_paths)
+        if result is False:
+            return jsonify(False)
+        print('Returning URLs to fetch .pcd files from...')
+        final_pc_file_urls = [fp.replace(UPLOAD_PATH, VIEW_PCD_URL) for fp in final_pc_file_paths]
+        return jsonify(final_pc_file_urls), 200
     return jsonify(False)
 
 
@@ -124,4 +154,3 @@ if __name__ == "__main__":
     if not os.path.exists(UPLOAD_PATH):
         os.makedirs(UPLOAD_PATH, exist_ok=True)
     app.run(host="0.0.0.0", port="5000")
-

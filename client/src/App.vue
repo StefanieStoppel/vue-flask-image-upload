@@ -1,9 +1,9 @@
 <template>
   <div id="app">
 
-    <FileUpload></FileUpload>
+    <FileUpload @pointCloudUrlsReceived="onPointCloudUrlsFetched"/>
 
-    <PCDViewer></PCDViewer>
+    <PCDViewer v-for="pointCloudUrl in pointCloudUrls" :key="pointCloudUrl" :pointCloudUrl="pointCloudUrl"/>
   </div>
 </template>
 
@@ -16,6 +16,16 @@ export default {
   components: {
     FileUpload,
     PCDViewer
+  },
+  data() {
+    return {
+      pointCloudUrls: []
+    }
+  },
+  methods: {
+    onPointCloudUrlsFetched(urls) {
+      this.pointCloudUrls = urls
+    }
   }
 }
 </script>

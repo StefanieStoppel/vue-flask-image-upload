@@ -55,6 +55,12 @@ const fitCameraToObject = function(camera, object, offset, controls) {  // eslin
 
 export default {
     name: 'PCDViewer',
+    props: {
+        pointCloudUrl: {
+            type: String,
+            required: true
+        }
+    },
     data() {
         return {
             renderer: null,
@@ -64,29 +70,13 @@ export default {
         }
     },
     methods: {
-        init () {
-            this.scene = new Scene();
-            this.scene.background = new Color('black');
-            this.camera = new PerspectiveCamera(15, window.innerWidth / window.innerHeight, 0.1, 1000);
-            // this.camera.position.x = 0.4;
-            this.camera.position.set(1,1,1);
-            this.camera.lookAt(new Vector3(0,0,0))
-            // this.camera.position.z = 0.03195136235887853;
-            // this.camera.up.set( 0, 0, 1 );
-            this.scene.add(this.camera);
-            this.renderer = new WebGLRenderer({antialias: true});
-            this.renderer.setPixelRatio(window.devicePixelRatio);
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(this.renderer.domElement);
-            console.log(this)
-
+        loadPointCloud() {
             const loader = new PCDLoader();
-            loader.load('http://localhost:5000/view-pcd',
+            loader.load(this.pointCloudUrl,
                 (points) => {
                     console.log("Success");
                     console.log(points);
                     points.material.size = 5;
-                    console.log(this)
                     this.scene.add(points);
                     // fitCameraToObject(this.camera, points);
                     this.renderer.render( this.scene, this.camera );
@@ -103,7 +93,10 @@ export default {
             let container = document.createElement('div');
             document.body.appendChild(container);
             container.appendChild(this.renderer.domElement);
-
+            this.addControls();
+            this.animate();
+        },
+        addControls() {
             this.controls = new TrackballControls( this.camera, this.renderer.domElement );
 
             this.controls.rotateSpeed = 2.0;
@@ -115,6 +108,20 @@ export default {
             this.controls.minDistance = 0.3;
             this.controls.maxDistance = 0.3 * 100;
         },
+        initScene () {
+            this.scene = new Scene();
+            this.scene.background = new Color('black');
+            this.camera = new PerspectiveCamera(15, window.innerWidth / window.innerHeight, 0.1, 1000);
+            // this.camera.position.x = 0.4;
+            this.camera.position.set(1,1,1);
+            this.camera.lookAt(new Vector3(0,0,0))
+            // this.camera.position.z = 0.03195136235887853;
+            // this.camera.up.set( 0, 0, 1 );
+            this.scene.add(this.camera);
+            this.renderer = new WebGLRenderer({antialias: true});
+            this.renderer.setPixelRatio(window.devicePixelRatio);
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+        },
         animate() {
             requestAnimationFrame( this.animate );
             this.controls.update();
@@ -124,8 +131,8 @@ export default {
         },
     },
     mounted() {
-        this.init();
-        this.animate();
+        this.initScene();
+        this.loadPointCloud()
     }
 }
 </script>

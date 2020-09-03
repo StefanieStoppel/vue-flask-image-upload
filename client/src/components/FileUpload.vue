@@ -104,6 +104,7 @@ export default {
                 console.log(`SUCCESS!! Response: ${response.data}`);
                 this.resetFiles();
                 this.heading = 'Thank you for your files!'
+                this.$emit('pointCloudUrlsReceived', response.data)
             }).catch(error => {
                 console.error(`FAILURE!! ${error}`);
                 this.resetFiles();

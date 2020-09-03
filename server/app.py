@@ -92,7 +92,11 @@ def index():
 @app.route("/view-pcd", methods=["GET"])
 @cross_origin(origin="localhost:5000")
 def view_pcd():
-    return send_file('/Users/sstoppel/dev/Uni/vue-file-upload/client/src/components/models/pcd/binary/037_scissors.pcd', attachment_filename='037_scissors.pcd')
+    for file in os.listdir(UPLOAD_PATH):
+        if file.endswith(".pcd"):
+            print(os.path.join(UPLOAD_PATH, file))
+            return send_file(os.path.join(UPLOAD_PATH, file))
+    return ''
 
 
 @app.route("/upload-files", methods=["POST"])

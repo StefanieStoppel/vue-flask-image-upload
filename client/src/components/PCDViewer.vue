@@ -1,5 +1,5 @@
 <template>
-    <div></div>
+    <div ref="pcdContainer" style="height: 100%"></div>
 </template>
 
 <script>
@@ -23,6 +23,10 @@ export default {
             controls: null
         }
     },
+    mounted() {
+        this.initScene();
+        this.loadPointCloud()
+    },
     methods: {
         loadPointCloud() {
             const loader = new PCDLoader();
@@ -42,9 +46,8 @@ export default {
                 (error) => {
                     console.log(error + "Error");
                 });
-            let container = document.createElement('div');
-            document.body.appendChild(container);
-            container.appendChild(this.renderer.domElement);
+            this.renderer.domElement.style.height = '100%';
+            this.$refs.pcdContainer.appendChild(this.renderer.domElement);
             this.addControls();
             this.animate();
         },
@@ -56,25 +59,23 @@ export default {
             this.controls.staticMoving = true;
         },
         initScene () {
+            const containerWidth = this.$refs.pcdContainer.clientWidth;
+            const containerHeight = containerWidth / 1.5;
             this.scene = new Scene();
             this.scene.background = new Color('black');
-            this.camera = new PerspectiveCamera(20, window.innerWidth / window.innerHeight, 1, 1000);
-            this.camera.position.set(0.3, 1, 1);
-            this.camera.lookAt(new Vector3(0,0,0))
+            this.camera = new PerspectiveCamera(20, containerWidth / containerHeight, 1, 1000);
+            this.camera.position.set(0.3, 0.5, 1);
+            this.camera.lookAt(new Vector3(0,0,0));
             this.scene.add(this.camera);
             this.renderer = new WebGLRenderer({antialias: true});
             this.renderer.setPixelRatio(window.devicePixelRatio);
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.renderer.setSize(containerWidth, containerHeight);
         },
         animate() {
             requestAnimationFrame( this.animate );
             this.controls.update();
             this.renderer.render( this.scene, this.camera );
         },
-    },
-    mounted() {
-        this.initScene();
-        this.loadPointCloud()
     }
 }
 </script>

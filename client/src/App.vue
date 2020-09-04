@@ -3,7 +3,9 @@
 
     <FileUpload @pointCloudUrlsReceived="onPointCloudUrlsFetched"/>
 
-    <PCDViewer v-for="pointCloudUrl in pointCloudUrls" :key="pointCloudUrl" :pointCloudUrl="pointCloudUrl"/>
+    <div class="pcd-container" id="pcd-container">
+      <PCDViewer v-for="pointCloudUrl in pointCloudUrls" :key="pointCloudUrl" :pointCloudUrl="pointCloudUrl"/>
+    </div>
   </div>
 </template>
 
@@ -42,5 +44,12 @@ export default {
 .file-icon {
   max-width: 8em;
   margin-top: 2em;
+}
+.pcd-container {
+  margin-top: 3em;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  grid-gap: 2em;
 }
 </style>

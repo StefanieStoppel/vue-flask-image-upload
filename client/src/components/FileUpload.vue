@@ -1,6 +1,6 @@
 <template>
     <section class="file-upload">
-        <h1>{{ heading }}</h1>
+        <h1 v-html="heading"></h1>
         <img alt="Picture icon" class="file-icon" src="@/assets/file-picture-o.svg">
         <div class="custom-file-upload">
             <div class="select">
@@ -103,7 +103,7 @@ export default {
             ).then(response => {
                 console.log(`SUCCESS!! Response: ${response.data}`);
                 this.resetFiles();
-                this.heading = 'Thank you for your files!'
+                this.heading = 'Thank you for your files! <br> Look at your point clouds below <br> ⬇';
                 this.$emit('pointCloudUrlsReceived', response.data)
             }).catch(error => {
                 console.error(`FAILURE!! ${error}`);

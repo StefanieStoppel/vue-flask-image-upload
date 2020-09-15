@@ -89,7 +89,7 @@ def find_frame_id(filename: str) -> str:
     return matches[0]
 
 
-def wait_for_pc_creation_until_timeout(pc_file_paths, timeout_seconds=60):
+def wait_for_pc_creation_until_timeout(pc_file_paths, timeout_seconds=100):
     print(f'Waiting {timeout_seconds} for final point cloud completion...')
     start_time = datetime.now()
     while True:

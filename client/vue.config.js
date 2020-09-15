@@ -1,6 +1,8 @@
 const path = require('path')
 
 module.exports = {
+    publicPath: '/static',
+    outputDir: '../server/static',
     css: {
         loaderOptions: {
             sass: {

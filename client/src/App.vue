@@ -44,8 +44,8 @@ export default {
   margin-top: 60px;
 }
 .file-icon {
-  max-width: 8em;
-  margin-top: 2em;
+  max-width: 6em;
+  margin-top: 1em;
 }
 .pcd-container {
   margin-top: 3em;

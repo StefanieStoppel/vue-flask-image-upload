@@ -1,6 +1,7 @@
 <template>
     <section class="file-upload">
         <h1 v-html="heading"></h1>
+        <pulse-loader :loading="loading" :color="'#f54291'" :size="'1em'"></pulse-loader>
         <img alt="Picture icon" class="file-icon" src="@/assets/file-picture-o.svg">
         <div class="custom-file-upload">
             <div class="select">
@@ -47,9 +48,13 @@
 </template>
 
 <script>
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 const objectClassDefault = '-- YCB OBJECT CLASS --';
 export default {
     name: "FileUpload",
+    components: {
+        PulseLoader
+    },
     data() {
         return {
             files: [],
@@ -61,7 +66,8 @@ export default {
                 { displayName: '037_scissors', value: '17' }
             ],
             chosenObjectClass: objectClassDefault,
-            showSelectDropdown: false
+            showSelectDropdown: false,
+            loading: false
         }
     },
     computed: {
@@ -93,6 +99,8 @@ export default {
             let formData = new FormData();
             this.files.forEach((file, i) => formData.append('files[' + i + ']', file));
             formData.append('objectClass', JSON.stringify(this.chosenObjectClass));
+            this.loading = true;
+            this.heading = 'Loading';
             this.$http.post('http://localhost:5000/upload-files',
                 formData,
                 {
@@ -103,10 +111,12 @@ export default {
             ).then(response => {
                 console.log(`SUCCESS!! Response: ${response.data}`);
                 this.resetFiles();
+                this.loading = false;
                 this.heading = 'Thank you for your files! <br> Look at your point clouds below <br> ⬇';
                 this.$emit('pointCloudUrlsReceived', response.data)
             }).catch(error => {
                 console.error(`FAILURE!! ${error}`);
+                this.loading = false;
                 this.resetFiles();
                 this.heading = 'Something went wrong...'
             });

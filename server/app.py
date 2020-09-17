@@ -20,7 +20,8 @@ KEY_CLASS_ID = 'class_id'
 KEY_CLASS_NAME = 'class_name'
 KEY_FILE_NAMES = 'file_names'
 KEY_FRAME_ID = 'frame_id'
-PCD_SUFFIX = '_pred_cloud-completed.pcd'
+PCD_COMPLETE_SUFFIX = '_pred_cloud-completed.pcd'
+PCD_PARTIAL_SUFFIX = '_pred_cloud.pcd'
 VIEW_PCD_URL = 'http://localhost:5000/view-pcd'
 
 # configuration
@@ -65,6 +66,10 @@ def create_files_per_frame_dict():
             files_per_frame_dict[frame_id].append(file)
         except ValueError as error:
             print(f"ERROR: {error}")
+    keys_to_remove = [key for key, value in files_per_frame_dict.items() if len(value) != 3]
+    for key in keys_to_remove:
+        print(f"Discarding frame {key} since files are missing which are needed for processing.")
+        del files_per_frame_dict[key]
     return files_per_frame_dict
 
 
@@ -90,7 +95,7 @@ def find_frame_id(filename: str) -> str:
     return matches[0]
 
 
-def wait_for_pc_creation_until_timeout(pc_file_paths, timeout_seconds=100):
+def wait_for_pc_creation_until_timeout(pc_file_paths, timeout_seconds=60):
     print(f'Waiting {timeout_seconds} for final point cloud completion...')
     event = threading.Event()
     start_time = datetime.now()
@@ -134,7 +139,8 @@ def upload_files():
         final_pc_file_paths = []
         for frame_config in config_list:
             frame_id = frame_config[KEY_FRAME_ID]
-            final_pc_file_paths.append(os.path.join(UPLOAD_PATH, f'{frame_id}{PCD_SUFFIX}'))
+            final_pc_file_paths.append(os.path.join(UPLOAD_PATH, f'{frame_id}{PCD_PARTIAL_SUFFIX}'))
+            final_pc_file_paths.append(os.path.join(UPLOAD_PATH, f'{frame_id}{PCD_COMPLETE_SUFFIX}'))
             save_config_as_json(frame_config, frame_id)
             save_uploaded_files(files_per_frame_dict, frame_id)
         # wait 60 seconds while checking for the creation of the pc files every 2 seconds
@@ -149,10 +155,10 @@ def upload_files():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--upload_path', type=str, required=True,
+    parser.add_argument('--upload_path', type=str,
                         help='Path to upload files to which are provided via the web interface.')
     args = parser.parse_args()
-    UPLOAD_PATH = args.upload_path
+    UPLOAD_PATH = args.upload_path or os.getenv('UPLOAD_PATH')
     if not os.path.exists(UPLOAD_PATH):
         os.makedirs(UPLOAD_PATH, exist_ok=True)
     app.run(host="0.0.0.0", port="5000")

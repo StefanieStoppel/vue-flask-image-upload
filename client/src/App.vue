@@ -4,6 +4,8 @@
     <FileUpload @pointCloudUrlsReceived="onPointCloudUrlsFetched"/>
 
     <div class="pcd-container" id="pcd-container">
+      <h2 v-if="pointCloudUrls.length > 0">Partial Point Clouds</h2>
+      <h2 v-if="pointCloudUrls.length > 0">Complete Point Clouds</h2>
       <PCDViewer v-for="pointCloudUrl in pointCloudUrls" :key="pointCloudUrl" :pointCloudUrl="pointCloudUrl"/>
     </div>
   </div>
@@ -49,7 +51,6 @@ export default {
   margin-top: 3em;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: 1fr;
   grid-gap: 2em;
 }
 </style>

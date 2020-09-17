@@ -34,7 +34,6 @@ export default {
                 (points) => {
                     console.log("Successfully loaded point cloud.");
                     this.scene.add(points);
-                    // fitCameraToObject(this.camera, points);
                     this.renderer.render( this.scene, this.camera );
                     const center = points.geometry.boundingSphere.center;
                     this.controls.target.set( center.x, center.y, center.z );

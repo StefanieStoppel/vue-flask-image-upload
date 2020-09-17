@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DEFAULT_HOST_MOUNT_DIR="$HOME/Desktop/test"
+DEFAULT_HOST_MOUNT_DIR="$HOME/Desktop/CVP/pipeline"
 HOST_MOUNT_DIR=${1:-$DEFAULT_HOST_MOUNT_DIR}
 CONTAINER_MOUNT_DIR=/app/data
 

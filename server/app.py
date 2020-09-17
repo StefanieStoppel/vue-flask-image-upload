@@ -2,6 +2,7 @@ import os
 import argparse
 import json
 import re
+import threading
 import time
 from datetime import datetime
 
@@ -91,9 +92,10 @@ def find_frame_id(filename: str) -> str:
 
 def wait_for_pc_creation_until_timeout(pc_file_paths, timeout_seconds=100):
     print(f'Waiting {timeout_seconds} for final point cloud completion...')
+    event = threading.Event()
     start_time = datetime.now()
     while True:
-        time.sleep(2)
+        event.wait(timeout=2)
         files_at_upload_path = [os.path.join(UPLOAD_PATH, file) for file in os.listdir(UPLOAD_PATH)
                                 if os.path.isfile(os.path.join(UPLOAD_PATH, file))]
         all_pc_created = all(pc_file_path in files_at_upload_path for pc_file_path in pc_file_paths)
